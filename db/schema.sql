@@ -4,28 +4,30 @@ CREATE DATABASE llc_db;
 
 \c llc_db;
 
--- Create a department table
-CREATE TABLE department (
+-- Create a departments table
+CREATE TABLE departments (
     department_id SERIAL PRIMARY KEY,
     department_name VARCHAR(255)
 );
 
--- Create a role table
-CREATE TABLE role (
+-- Create a roles table
+CREATE TABLE roles (
     role_id SERIAL PRIMARY KEY,
     title VARCHAR(255),
     salary DECIMAL NOT NULL,
-    department_id INTEGER,
-    FOREIGN KEY (department_id) REFERENCES department(department_id),
+    department_id INTEGER NOT NULL,
+    FOREIGN KEY (department_id) 
+    REFERENCES departments(department_id)
+    ON DELETE SET NULL
 );
 
--- Create an employee table
-CREATE TABLE employee (
-    id SERIAL PRIMARY KEY,
+-- Create an employees table
+CREATE TABLE employees (
+    employee_id SERIAL PRIMARY KEY,
     first_name VARCHAR(100),
     last_name VARCHAR(100),
     role_id INTEGER,
     manager_id INTEGER,
-    FOREIGN KEY (role_id) REFERENCES role(role_id),
-    PRIMARY KEY (manager_id) REFERENCES employee(employee_id)
+    FOREIGN KEY (role_id) REFERENCES roles(role_id) ON DELETE SET NULL,
+    FOREIGN KEY (manager_id) REFERENCES employees(employee_id) ON DELETE SET NULL
 );

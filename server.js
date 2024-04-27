@@ -26,3 +26,6 @@ const pool = new Pool(
 
 pool.connect();
 
+app.listen(PORT, () =>
+  console.log(`App listening at http://localhost:${PORT}`)
+);
