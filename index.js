@@ -24,7 +24,7 @@ async function init() {
         client = await pool.connect();
 
         while (true) {
-            // the Q&A for navigating the command line prompts
+            // the main landing for the inquirer prompts
             const answers = await inquirer.prompt([
                 {
                     type: "list",
@@ -34,19 +34,22 @@ async function init() {
                 }
             ]);
 
+            // the SQL queries for viewing the departments
             switch (answers.login) {
                 case "view all departments":
-                    const departments = await client.query('SELECT department_id, department_name FROM departments;');
+                    const departments = await client.query('SELECT * FROM departments;');
                     console.table(departments.rows);
                     break;
                 case "view all roles":
-                    const roles = await client.query('SELECT * FROM roles');
+                    const roles = await client.query('SELECT * FROM roles INNER JOIN departments ON roles.department_id = departments.department_id;');
                     console.table(roles.rows);
                     break;
                 case "view all employees":
                     const employees = await client.query(query);
                     console.table(employees.rows);
                     break;
+
+                //The Q&A for adding to the various departments
                 case "add a department":
                     const addDepartment = await inquirer.prompt([
                         {
@@ -58,6 +61,7 @@ async function init() {
                     await client.query('INSERT INTO departments (department_name) VALUES ($1)', [addDepartment.newDepartment]);
                     console.log("Department added successfully!");
                     break;
+
                 case "add a role":
                     try {
                         // Query the database to get existing departments
@@ -146,6 +150,7 @@ async function init() {
                     }
                     break;
 
+                //the variation for updating an existing employee
                 case "update an employee":
                     try {
                         // Query the database to get existing employees
@@ -188,7 +193,8 @@ async function init() {
                         console.error('Error executing query:', error.message);
                     }
                     break;
-                                
+                
+                //When you're done with this
                 case "quit":
                     console.log("Exiting...");
                     return; // Exit the function
